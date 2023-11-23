@@ -1,0 +1,41 @@
+import openpyxl as o
+
+i=2
+
+doc = o.reader.excel.load_workbook(filename="graph_231106_1900.xlsx")
+doc.active = 0
+sheet = doc.active
+
+sheet2 = doc["New_links"]
+sheet3 = doc["graph"]
+
+for row in sheet.iter_rows(min_row=i, min_col=1, max_row=sheet.max_row, max_col=sheet.max_column):
+    current_row = []
+    for cell in row:
+        current_row.append(cell.value)
+    j=2
+    k=1
+    print(i)
+    if current_row[3] is not None:
+        for row2 in sheet2.iter_rows(min_row=j, min_col=1, max_row=sheet2.max_row, max_col=sheet2.max_column):
+            current_row2 = []
+            for cell2 in row2:
+                current_row2.append(cell2.value)
+            if current_row[0]==current_row2[0]:
+                continue
+            else:
+                if current_row[3]==current_row2[5]:
+                    try:
+                        c1 = sheet3.cell(row = k, column = 1)
+                        c1.value = current_row[0]
+                        c2 = sheet3.cell(row = k, column = 2)
+                        c2.value = current_row2[0]
+                        k=k+1
+                        print('('+str(current_row[0])+';'+str(current_row2[0])+')')
+                    except:
+                        print("ErrorName")
+                        continue
+            j=j+1
+    i=i+1
+
+    doc.save('graph_231106_1900.xlsx')
