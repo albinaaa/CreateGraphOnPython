@@ -1,0 +1,50 @@
+
+from pyvis.network import Network
+import networkx as nx
+from IPython.display import display, HTML
+import openpyxl as o
+
+doc = o.reader.excel.load_workbook(filename="graph_231123_1430.xlsx")
+doc.active = 0
+sheet = doc.active
+
+sheet3 = doc["graph2"]
+
+i=2
+
+net = Network(height="1200px", width="100%", notebook=True, cdn_resources='in_line')  # создаём объект графа
+
+# добавление узлов
+nodes = []
+colors = []
+labels = []
+for row in sheet.iter_rows(min_row=i, min_col=1, max_row=sheet.max_row, max_col=sheet.max_column):
+    current_row = []
+    for cell in row:
+        current_row.append(cell.value)
+    if int(current_row[9])>-1:       
+        nodes.append(current_row[0])
+        colors.append(current_row[10])
+        labels.append(current_row[1])
+    i=i+1
+
+net.add_nodes(nodes, label=labels, color=colors)
+# добавляем список рёбер
+i=2
+edges = []
+for row3 in sheet3.iter_rows(min_row=i, min_col=1, max_row=sheet3.max_row, max_col=sheet3.max_column):
+    current_row3 = []
+    for cell3 in row3:
+        current_row3.append(cell3.value)
+    tuple_element = (current_row3[0], current_row3[1])
+    edges.append(tuple_element)
+    i=i+1
+print ('add edges')
+net.add_edges(edges)
+
+net.show_buttons(filter_=True)
+
+html = net.generate_html()
+with open("graph2.html", mode='w', encoding='utf-8') as fp:
+        fp.write(html)
+display(HTML(html))
